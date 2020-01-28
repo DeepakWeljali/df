@@ -1,23 +1,3 @@
-#variable "AWS_REGION" {
-#type = string
-#}
-
-#variable "VPC_CIDR" {
-#type = string
-#}
-
-#variable "VPC_NAME" {
-#type = string
-#}
-
-#variable "S3_BUCKET_TFSTATE" {
-#type = string
-#}
-
-#variable "TENANT_NAME" {
-#type = string
-#}
-
 terraform {
   backend "s3" {
 }

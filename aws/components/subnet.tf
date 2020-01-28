@@ -1,24 +1,3 @@
-#variable "AWS_REGION" {
-#type = string
-#}
-
-#variable "VPC_NAME" {
-#}
-
-#variable "PUBLIC_SUBNET_CIDR" {
-#type = list
-#}
-
-#variable "TENANT_NAME" {
-#}
-
-#variable "SDLC_ENVIRONMENT"{
-#}
-
-#variable "PRIVATE_SUBNET_CIDR" {
-#type = list
-#}
-
 terraform {
   backend "s3" {
 }
@@ -90,23 +69,15 @@ resource "aws_subnet" "private_subnet" {
 
 #Elastic IP
 resource "aws_eip" "nat_ip" {
-    count = length(var.PUBLIC_SUBNET_CIDR)
+    #count = length(var.PUBLIC_SUBNET_CIDR)
+    subnet_id = var.PUBLIC_SUBNET_CIDR
     vpc = true
 }
 
-#NAT Gateway
-#resource "aws_nat_gateway" "nat_gateway" {
-#    count = length(var.PUBLIC_SUBNET_CIDR)
-#    allocation_id = element(aws_eip.nat_ip.*.id, count.index)
-#    subnet_id = element(aws_subnet.public_subnet.*.id, count.index)
-#    tags ={
-#        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"nat_gateway",count.index])
-#    }
-#}
 
 #NAT Gateway
 resource "aws_nat_gateway" "nat_gateway" {
-    allocation_id = element(aws_eip.nat_ip.*.id, 0 )
+    allocation_id = aws_eip.nat_ip.id
     subnet_id = element(aws_subnet.public_subnet.*.id, 0 )
     tags ={
         Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"nat_gateway"])
@@ -121,7 +92,7 @@ resource "aws_route_table" "private_route_table" {
     vpc_id =  data.aws_vpc.myvpc.id
     route {
         cidr_block = "0.0.0.0/0"
-        nat_gateway_id = element(aws_nat_gateway.nat_gateway.*.id,count.index)
+        nat_gateway_id = aws_nat_gateway.nat_gateway.id
     }
     tags ={
         Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"private_route_table",count.index])
