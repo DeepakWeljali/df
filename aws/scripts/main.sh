@@ -6,9 +6,10 @@ echo "### Infra deployment for the provided sdlc environment"
 
 SDLC_ENVIRONMENT=$1
 BRANCH=$2
+ACT=$3
 
 
-if [[ "$#" -lt 2 ]]; then
+if [[ "$#" -lt 3 ]]; then
   echo "Exiting: Pipeline parameters are missing. Cannot execute the pipeline"
   exit 1
 fi
@@ -31,6 +32,7 @@ EOF_code_params
 SETENV_SCRIPT="${SCRIPT_PATH}/setenv.sh"
 if [ ! -f "${SETENV_SCRIPT}" ]; then
   echo "FATAL: ${SETENV_SCRIPT} not found. Unable to include shared functions."
+  echo "FATAL: ${SETENV_SCRIPT} not found. Unable to include shared functions."
   exit 1
 fi
 . ${SETENV_SCRIPT}
@@ -43,24 +45,47 @@ else
   echo "S3 Bucket is already available for ${SDLC_ENVIRONMENT}"
 fi
 
-component_list=("vpc" "subnet" "public_ec2" "private_ec2")
-#component_list=("public_ec2" "private_ec2" "subnet" "vpc")
+if [ "$ACT" = "create" ]; then
+    echo "Infrastructure creation in progress"
+    component_list=("vpc" "subnet" "public_ec2" "private_ec2")
 
-for component in ${component_list[@]}
-do
-    mkdir ${TERRAFORM_TEMPLATE}
-    cp ${COMPONENT_PATH}/${component}.tf ${TERRAFORM_TEMPLATE}/
-    cp ${COMPONENT_PATH}/provider.tf ${TERRAFORM_TEMPLATE}/
-    cp ${COMPONENT_PATH}/variables.tf ${TERRAFORM_TEMPLATE}/
-    cd ${TERRAFORM_TEMPLATE}
-    terraform init \
-      -backend-config="bucket=$S3_BUCKET_TFSTATE" \
-      -backend-config="key=${component}.state" \
-      -backend-config="region=$AWS_REGION" 
-    #  ${TERRAFORM_TEMPLATE}
-    terraform apply -auto-approve
-    cd ../../
-#   terraform plan ${TERRAFORM_TEMPLATE} 
-    rm -rf ${TERRAFORM_TEMPLATE}
-done
+    for component in ${component_list[@]}
+    do
+      mkdir ${TERRAFORM_TEMPLATE}
+      cp ${COMPONENT_PATH}/${component}.tf ${TERRAFORM_TEMPLATE}/
+      cp ${COMPONENT_PATH}/provider.tf ${TERRAFORM_TEMPLATE}/
+      cp ${COMPONENT_PATH}/variables.tf ${TERRAFORM_TEMPLATE}/
+      cd ${TERRAFORM_TEMPLATE}
+      terraform init \
+          -backend-config="bucket=$S3_BUCKET_TFSTATE" \
+          -backend-config="key=${component}.state" \
+          -backend-config="region=$AWS_REGION" 
+      terraform apply -auto-approve
+      cd ../../
+      #terraform plan ${TERRAFORM_TEMPLATE} 
+      rm -rf ${TERRAFORM_TEMPLATE}
+    done
+elif [ "$ACT" = "delete" ]; then
+    echo "Delete in progress"
+    component_list=("public_ec2" "private_ec2" "subnet" "vpc")
 
+    for component in ${component_list[@]}
+    do
+       mkdir ${TERRAFORM_TEMPLATE}
+       cp ${COMPONENT_PATH}/${component}.tf ${TERRAFORM_TEMPLATE}/
+       cp ${COMPONENT_PATH}/provider.tf ${TERRAFORM_TEMPLATE}/
+       cp ${COMPONENT_PATH}/variables.tf ${TERRAFORM_TEMPLATE}/
+       cd ${TERRAFORM_TEMPLATE}
+       terraform init \
+          -backend-config="bucket=$S3_BUCKET_TFSTATE" \
+          -backend-config="key=${component}.state" \
+          -backend-config="region=$AWS_REGION"
+       terraform destroy -auto-approve
+       cd ../../
+       #terraform plan ${TERRAFORM_TEMPLATE}
+       rm -rf ${TERRAFORM_TEMPLATE}
+    done
+else
+    echo "Invalid action paramater"
+    exit 1
+fi
