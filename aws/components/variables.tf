@@ -10,7 +10,7 @@ default = "10.0.0.0/16"
 
 variable "VPC_NAME" {
 type = string
-default = "12-df_dev_VPC"
+default = "12-df_VPC"
 }
 
 variable "TENANT_NAME" {
@@ -23,9 +23,6 @@ type = list
 default = ["10.0.1.0/28"]
 }
 
-variable "SDLC_ENVIRONMENT"{
-default = "dev"
-}
 
 variable "PRIVATE_SUBNET_CIDR" {
 type = list
@@ -33,7 +30,7 @@ default = ["10.0.3.0/28"]
 }
 
 variable "AMI_ID" {
-default = "ami-062f7200baf2fa504"
+default = "ami-4fffc834"
 }
 
 variable "INSTANCE_TYPE" {

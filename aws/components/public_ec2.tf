@@ -62,7 +62,7 @@ resource "aws_security_group" "public_ec2_sg" {
     }
   }
     tags = {
-         Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"public_sg"])
+         Name = join("_", [var.TENANT_NAME,"public_sg"])
     }
 
 }
@@ -89,7 +89,7 @@ resource "aws_instance" "public_ec2_instance" {
         EOF
 
     tags = {
-         Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"public_instance"])
+         Name = join("_", [var.TENANT_NAME,"public_instance"])
     }
 }
 

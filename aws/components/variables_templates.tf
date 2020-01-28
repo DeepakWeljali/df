@@ -23,10 +23,6 @@ type = list
 default = <PUBLIC_SUBNET_CIDR>
 }
 
-variable "SDLC_ENVIRONMENT"{
-default = "<SDLC_ENVIRONMENT>"
-}
-
 variable "PRIVATE_SUBNET_CIDR" {
 type = list
 default = <PRIVATE_SUBNET_CIDR>

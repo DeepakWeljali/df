@@ -2,48 +2,50 @@
 #
 # This should be included by each script to DRY things up.
 #
-SDLC_ENVIRONMENT=$1
+#SDLC_ENVIRONMENT=prod
 echo ' -- Utility functions and shared variables included.'
 
 ###################
 # Global settings
 # Functions
-function fatal(){
-  echo "FATAL: $1"
-  exit 1
-}
+#function fatal(){
+#  echo "FATAL: $1"
+#  exit 1
+#}
+
+#SDLC env will be production
 
 function set_environment(){
-  case "$SDLC_ENVIRONMENT" in
-    "stg"|"prod")
+  #case "$SDLC_ENVIRONMENT" in
+  #  "stg"|"prod")
       [ -z "$AWS_REGION" ] && AWS_REGION='us-east-1'
       AWS_REGION_NAME='UsEast1'
       TENANT_NAME="12-df"
       AWS_ACCOUNT_NUMBER="6542456899"
       VPC_CIDR="10.0.0.0/16"
-      VPC_NAME="${TENANT_NAME}_${SDLC_ENVIRONMENT}_VPC"
-      S3_BUCKET_TFSTATE="${TENANT_NAME}-${SDLC_ENVIRONMENT}-tfstate"
+      VPC_NAME="${TENANT_NAME}_VPC"
+      S3_BUCKET_TFSTATE="${TENANT_NAME}-tfstate"
       PUBLIC_SUBNET_CIDR='["10.0.1.0/28"]'
       PRIVATE_SUBNET_CIDR='["10.0.3.0/28"]'
       INSTANCE_TYPE="t2.micro"
       AMI_ID="ami-4fffc834"
       KEY_NAME="df"
-      ;;
-    *)
-      [ -z "$AWS_REGION" ] && AWS_REGION='us-east-1'
-      AWS_REGION_NAME='UsEast1'
-      TENANT_NAME="12-df"
-      AWS_ACCOUNT_NUMBER="6542456899"
-      VPC_CIDR="10.0.0.0/16"
-      VPC_NAME="${TENANT_NAME}_${SDLC_ENVIRONMENT}_VPC"
-      S3_BUCKET_TFSTATE="${TENANT_NAME}-${SDLC_ENVIRONMENT}-tfstate"
-      PUBLIC_SUBNET_CIDR='["10.0.1.0/28"]'
-      PRIVATE_SUBNET_CIDR='["10.0.3.0/28"]'
-      INSTANCE_TYPE="t2.micro"
-      AMI_ID="ami-062f7200baf2fa504"
-      KEY_NAME="df"
-      ;;
-  esac
+#      ;;
+#    *)
+#      [ -z "$AWS_REGION" ] && AWS_REGION='us-east-1'
+#      AWS_REGION_NAME='UsEast1'
+#      TENANT_NAME="12-df"
+#      AWS_ACCOUNT_NUMBER="6542456899"
+#     VPC_CIDR="10.0.0.0/16"
+#     VPC_NAME="${TENANT_NAME}_VPC"
+#     S3_BUCKET_TFSTATE="${TENANT_NAME}-tfstate"
+#      PUBLIC_SUBNET_CIDR='["10.0.1.0/28"]'
+#      PRIVATE_SUBNET_CIDR='["10.0.3.0/28"]'
+#      INSTANCE_TYPE="t2.micro"
+#      AMI_ID="ami-062f7200baf2fa504"
+#      KEY_NAME="df"
+#      ;;
+#  esac
 }
 
 echo "Calling set environment"

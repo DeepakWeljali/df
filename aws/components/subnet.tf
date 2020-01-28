@@ -23,7 +23,7 @@ resource "aws_subnet" "public_subnet" {
     cidr_block = element(var.PUBLIC_SUBNET_CIDR, count.index)
     availability_zone = data.aws_availability_zones.available.names[count.index]
     tags = {
-        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"public_subnet",count.index])
+        Name = join("_", [var.TENANT_NAME,"public_subnet",count.index])
     }
 }
 
@@ -31,7 +31,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_internet_gateway" "internet_gateway" {
     vpc_id = data.aws_vpc.myvpc.id
     tags = {
-        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"internet_gateway"])
+        Name = join("_", [var.TENANT_NAME,"internet_gateway"])
     }
 }
 
@@ -44,7 +44,7 @@ resource "aws_route_table" "public_route_table" {
         gateway_id = aws_internet_gateway.internet_gateway.id
     }
     tags = {
-        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"route_table"])
+        Name = join("_", [var.TENANT_NAME,"route_table"])
     }
 }
 
@@ -63,7 +63,7 @@ resource "aws_subnet" "private_subnet" {
     cidr_block = element(var.PRIVATE_SUBNET_CIDR, count.index)
     availability_zone = data.aws_availability_zones.available.names[count.index]
     tags = {
-        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"private_subnet",count.index])
+        Name = join("_", [var.TENANT_NAME,"private_subnet",count.index])
     }
 }
 
@@ -80,7 +80,7 @@ resource "aws_nat_gateway" "nat_gateway" {
     allocation_id = aws_eip.nat_ip.id
     subnet_id = element(aws_subnet.public_subnet.*.id, 0 )
     tags ={
-        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"nat_gateway"])
+        Name = join("_", [var.TENANT_NAME,"nat_gateway"])
     }
 }
 
@@ -95,7 +95,7 @@ resource "aws_route_table" "private_route_table" {
         nat_gateway_id = aws_nat_gateway.nat_gateway.id
     }
     tags ={
-        Name = join("_", [var.TENANT_NAME,var.SDLC_ENVIRONMENT,"private_route_table",count.index])
+        Name = join("_", [var.TENANT_NAME,"private_route_table",count.index])
     }
 }
 

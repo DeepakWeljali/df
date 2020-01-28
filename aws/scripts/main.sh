@@ -4,12 +4,12 @@ set -e
 echo "### Infra deployment for the provided sdlc environment"
 
 
-SDLC_ENVIRONMENT=$1
-BRANCH=$2
-ACT=$3
+#SDLC_ENVIRONMENT=$1
+BRANCH=$1
+ACT=$2
 
 
-if [[ "$#" -lt 3 ]]; then
+if [[ "$#" -lt 2 ]]; then
   echo "Exiting: Pipeline parameters are missing. Cannot execute the pipeline"
   exit 1
 fi
@@ -24,7 +24,7 @@ COMPONENT_PATH="aws/components"
 TERRAFORM_TEMPLATE="aws/terraform_template"
 
 cat <<EOF_code_params
-SDLC_ENVIRONMENT=$SDLC_ENVIRONMENT
+#SDLC_ENVIRONMENT=$SDLC_ENVIRONMENT
 BRANCH=$BRANCH
 EOF_code_params
 
@@ -39,10 +39,10 @@ fi
 
 echo "Creating S3 bucket for TF state if not already available"
 if [[ ! $(aws s3 ls | grep ${S3_BUCKET_TFSTATE}) ]]; then
-  echo "Creating S3 bucket for ${SDLC_ENVIRONMENT}"
+  echo "Creating S3 bucket"
   aws s3 mb s3://${S3_BUCKET_TFSTATE} --region ${AWS_REGION}
 else
-  echo "S3 Bucket is already available for ${SDLC_ENVIRONMENT}"
+  echo "S3 Bucket is already existing"
 fi
 
 if [ "$ACT" = "create" ]; then
