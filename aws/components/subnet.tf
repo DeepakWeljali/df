@@ -70,7 +70,7 @@ resource "aws_subnet" "private_subnet" {
 #Elastic IP
 resource "aws_eip" "nat_ip" {
     #count = length(var.PUBLIC_SUBNET_CIDR)
-    subnet_id = var.PUBLIC_SUBNET_CIDR
+    #subnet_id = var.PUBLIC_SUBNET_CIDR
     vpc = true
 }
 
