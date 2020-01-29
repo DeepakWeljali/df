@@ -59,7 +59,6 @@ sed -i  -e "s#<AWS_REGION>#${AWS_REGION}#" \
     -e "s#<VPC_NAME>#$VPC_NAME#" \
     -e "s#<TENANT_NAME>#$TENANT_NAME#" \
     -e "s#<PUBLIC_SUBNET_CIDR>#$PUBLIC_SUBNET_CIDR#" \
-    -e "s#<SDLC_ENVIRONMENT>#$SDLC_ENVIRONMENT#" \
     -e "s#<PRIVATE_SUBNET_CIDR>#$PRIVATE_SUBNET_CIDR#" \
     -e "s#<AMI_ID>#$AMI_ID#" \
     -e "s#<INSTANCE_TYPE>#$INSTANCE_TYPE#" \

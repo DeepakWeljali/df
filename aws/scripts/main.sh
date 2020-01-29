@@ -47,7 +47,7 @@ fi
 
 if [ "$ACT" = "create" ]; then
     echo "Infrastructure creation in progress"
-    component_list=("vpc" "subnet" "public_ec2" "private_ec2")
+    component_list=("vpc" "subnet" "matillion" "thoughtspot")
 
     for component in ${component_list[@]}
     do
@@ -67,7 +67,7 @@ if [ "$ACT" = "create" ]; then
     done
 elif [ "$ACT" = "delete" ]; then
     echo "Delete in progress"
-    component_list=("public_ec2" "private_ec2" "subnet" "vpc")
+    component_list=("matillion" "thoughtspot" "subnet" "vpc")
 
     for component in ${component_list[@]}
     do

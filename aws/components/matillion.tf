@@ -1,6 +1,6 @@
 variable "INGRESS_PORT" {
 type = list
-default = ["22","80","8080","8443"]
+default = ["22","80","8080"]
 }
 
 variable "INGRESS_CIDR" {
@@ -29,11 +29,11 @@ data "aws_vpc" "vpc" {
   }
 }
 
-#Getting private subnet using tag
+#Getting public subnet using tags
 data "aws_subnet_ids" "subnets" {
   vpc_id = data.aws_vpc.vpc.id
   tags = {
-    Name = "*private*"
+    Name = "*public*"
   }
 }
 
@@ -43,8 +43,8 @@ terraform {
 }
 
 #Security Group
-resource "aws_security_group" "private_ec2_sg" {
-  name = "private security group"
+resource "aws_security_group" "public_ec2_sg" {
+  name = "public security group" 
   vpc_id = data.aws_vpc.vpc.id
   egress {
     from_port = var.EGRESS_PORT
@@ -62,18 +62,19 @@ resource "aws_security_group" "private_ec2_sg" {
     }
   }
     tags = {
-         Name = join("_", [var.TENANT_NAME,"private_sg"])
+         Name = join("_", [var.TENANT_NAME,"public_sg"])
     }
 
 }
 
-#Creating Private Instance
-resource "aws_instance" "private_ec2_instance" {
+#Public Instance
+resource "aws_instance" "public_ec2_instance" {
     ami = var.AMI_ID
     instance_type = var.INSTANCE_TYPE
     key_name = var.KEY_NAME
-    vpc_security_group_ids = [aws_security_group.private_ec2_sg.id]
+    vpc_security_group_ids = [aws_security_group.public_ec2_sg.id]
     subnet_id = tolist(data.aws_subnet_ids.subnets.ids)[0]
+    associate_public_ip_address = true
     source_dest_check = false
     user_data = <<-EOF
         #!/bin/bash
@@ -88,8 +89,12 @@ resource "aws_instance" "private_ec2_instance" {
         EOF
 
     tags = {
-         Name = join("_", [var.TENANT_NAME,"private_instance"])
+         Name = join("_", [var.TENANT_NAME,"matillion_public_instance"])
     }
-
 }
 
+#Elastic IP for public instance
+resource "aws_eip" "elastic_ip_ec2" {
+    instance = aws_instance.public_ec2_instance.id
+    vpc = true
+}
